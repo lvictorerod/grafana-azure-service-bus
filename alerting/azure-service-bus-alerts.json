@@ -1,0 +1,293 @@
+{
+  "apiVersion": 1,
+  "groups": [
+    {
+      "orgId": 1,
+      "name": "azure-service-bus",
+      "folder": "Azure Service Bus",
+      "interval": "1m",
+      "rules": [
+        {
+          "uid": "asb-deadlettered",
+          "title": "Service Bus: dead-lettered messages",
+          "condition": "C",
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 900,
+                "to": 0
+              },
+              "datasourceUid": "${AZURE_MONITOR_DS_UID}",
+              "model": {
+                "refId": "A",
+                "queryType": "Azure Monitor",
+                "subscription": "${ASB_SUBSCRIPTION_ID}",
+                "azureMonitor": {
+                  "resources": [
+                    {
+                      "subscription": "${ASB_SUBSCRIPTION_ID}",
+                      "resourceGroup": "${ASB_RESOURCE_GROUP}",
+                      "resourceName": "${ASB_NAMESPACE}",
+                      "metricNamespace": "microsoft.servicebus/namespaces"
+                    }
+                  ],
+                  "metricNamespace": "microsoft.servicebus/namespaces",
+                  "metricName": "DeadletteredMessages",
+                  "aggregation": "Average",
+                  "timeGrain": "PT1M",
+                  "dimensionFilters": [
+                    {
+                      "dimension": "EntityName",
+                      "operator": "eq",
+                      "filters": []
+                    }
+                  ],
+                  "top": "50"
+                }
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "type": "reduce",
+                "expression": "A",
+                "reducer": "last",
+                "settings": {
+                  "mode": "dropNN"
+                }
+              }
+            },
+            {
+              "refId": "C",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "C",
+                "type": "threshold",
+                "expression": "B",
+                "conditions": [
+                  {
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "for": "5m",
+          "annotations": {
+            "summary": "Dead-lettered messages in {{ index .Labels \"entityname\" }}",
+            "description": "The dead-letter subqueue of this entity has held at least one message for 5 minutes. Inspect the dead-letter reason in the Azure portal or Service Bus Explorer.",
+            "__dashboardUid__": "azure-service-bus",
+            "__panelId__": "21"
+          },
+          "labels": {
+            "service": "azure-service-bus",
+            "severity": "warning"
+          },
+          "isPaused": false
+        },
+        {
+          "uid": "asb-server-errors",
+          "title": "Service Bus: server errors",
+          "condition": "C",
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "${AZURE_MONITOR_DS_UID}",
+              "model": {
+                "refId": "A",
+                "queryType": "Azure Monitor",
+                "subscription": "${ASB_SUBSCRIPTION_ID}",
+                "azureMonitor": {
+                  "resources": [
+                    {
+                      "subscription": "${ASB_SUBSCRIPTION_ID}",
+                      "resourceGroup": "${ASB_RESOURCE_GROUP}",
+                      "resourceName": "${ASB_NAMESPACE}",
+                      "metricNamespace": "microsoft.servicebus/namespaces"
+                    }
+                  ],
+                  "metricNamespace": "microsoft.servicebus/namespaces",
+                  "metricName": "ServerErrors",
+                  "aggregation": "Total",
+                  "timeGrain": "PT1M"
+                }
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "type": "reduce",
+                "expression": "A",
+                "reducer": "sum",
+                "settings": {
+                  "mode": "dropNN"
+                }
+              }
+            },
+            {
+              "refId": "C",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "C",
+                "type": "threshold",
+                "expression": "B",
+                "conditions": [
+                  {
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "for": "0s",
+          "annotations": {
+            "summary": "Service Bus returned server errors in the last 10 minutes",
+            "description": "ServerErrors counts failures on the Service Bus side (not client mistakes). Check Azure Service Health and the namespace's Diagnose and solve problems page.",
+            "__dashboardUid__": "azure-service-bus",
+            "__panelId__": "27"
+          },
+          "labels": {
+            "service": "azure-service-bus",
+            "severity": "warning"
+          },
+          "isPaused": false
+        },
+        {
+          "uid": "asb-throttled",
+          "title": "Service Bus: throttled requests",
+          "condition": "C",
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "${AZURE_MONITOR_DS_UID}",
+              "model": {
+                "refId": "A",
+                "queryType": "Azure Monitor",
+                "subscription": "${ASB_SUBSCRIPTION_ID}",
+                "azureMonitor": {
+                  "resources": [
+                    {
+                      "subscription": "${ASB_SUBSCRIPTION_ID}",
+                      "resourceGroup": "${ASB_RESOURCE_GROUP}",
+                      "resourceName": "${ASB_NAMESPACE}",
+                      "metricNamespace": "microsoft.servicebus/namespaces"
+                    }
+                  ],
+                  "metricNamespace": "microsoft.servicebus/namespaces",
+                  "metricName": "ThrottledRequests",
+                  "aggregation": "Total",
+                  "timeGrain": "PT1M",
+                  "dimensionFilters": [
+                    {
+                      "dimension": "MessagingErrorSubCode",
+                      "operator": "eq",
+                      "filters": []
+                    }
+                  ],
+                  "top": "50"
+                }
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "type": "reduce",
+                "expression": "A",
+                "reducer": "sum",
+                "settings": {
+                  "mode": "dropNN"
+                }
+              }
+            },
+            {
+              "refId": "C",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "C",
+                "type": "threshold",
+                "expression": "B",
+                "conditions": [
+                  {
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "for": "0s",
+          "annotations": {
+            "summary": "Requests throttled ({{ index .Labels \"messagingerrorsubcode\" }}) in the last 10 minutes",
+            "description": "The namespace is throttling requests. The sub-code (CPU, Storage, Namespace, Unknown) says which limit was hit; Premium namespaces can scale messaging units.",
+            "__dashboardUid__": "azure-service-bus",
+            "__panelId__": "28"
+          },
+          "labels": {
+            "service": "azure-service-bus",
+            "severity": "warning"
+          },
+          "isPaused": false
+        }
+      ]
+    }
+  ]
+}

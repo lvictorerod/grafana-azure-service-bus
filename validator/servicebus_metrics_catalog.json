@@ -1,0 +1,46 @@
+{
+  "_source": "https://learn.microsoft.com/azure/service-bus-messaging/monitor-service-bus-reference (retrieved 2026-10-15)",
+  "_semantics": {
+    "counter": "Accumulated count/bytes per time grain (aggregation Total). Additive across grains.",
+    "point_in_time": "Sampled value (queue depth, size). Use Average/Minimum/Maximum; never Total.",
+    "gauge_total_only": "Point-in-time value that only exposes Total; must be queried at PT1M, otherwise samples are added together.",
+    "average_only": "Pre-averaged value (latency, connection churn)."
+  },
+  "namespace": "microsoft.servicebus/namespaces",
+  "metrics": {
+    "AbandonMessage":                  {"unit": "Count",   "aggregations": ["Total"], "dimensions": ["EntityName"], "kind": "counter"},
+    "ActiveConnections":               {"unit": "Count",   "aggregations": ["Total"], "dimensions": [], "kind": "gauge_total_only"},
+    "ActiveMessages":                  {"unit": "Count",   "aggregations": ["Average", "Minimum", "Maximum"], "dimensions": ["EntityName"], "kind": "point_in_time", "entity_level": true},
+    "CompleteMessage":                 {"unit": "Count",   "aggregations": ["Total"], "dimensions": ["EntityName"], "kind": "counter"},
+    "ConnectionsClosed":               {"unit": "Count",   "aggregations": ["Average"], "dimensions": ["EntityName"], "kind": "average_only"},
+    "ConnectionsOpened":               {"unit": "Count",   "aggregations": ["Average"], "dimensions": ["EntityName"], "kind": "average_only"},
+    "CPUXNS":                          {"unit": "Percent", "aggregations": ["Maximum"], "dimensions": ["Replica"], "kind": "point_in_time", "deprecated": true, "replacement": "NamespaceCpuUsage", "premium_only": true},
+    "DeadletteredMessages":            {"unit": "Count",   "aggregations": ["Average", "Minimum", "Maximum"], "dimensions": ["EntityName"], "kind": "point_in_time", "entity_level": true},
+    "IncomingBytes":                   {"unit": "Bytes",   "aggregations": ["Total"], "dimensions": ["EntityName"], "kind": "counter"},
+    "IncomingMessages":                {"unit": "Count",   "aggregations": ["Total"], "dimensions": ["EntityName"], "kind": "counter"},
+    "IncomingRequests":                {"unit": "Count",   "aggregations": ["Total"], "dimensions": ["EntityName"], "kind": "counter"},
+    "Messages":                        {"unit": "Count",   "aggregations": ["Average", "Minimum", "Maximum"], "dimensions": ["EntityName"], "kind": "point_in_time", "entity_level": true},
+    "NamespaceCpuUsage":               {"unit": "Percent", "aggregations": ["Total", "Average", "Minimum", "Maximum"], "dimensions": ["Replica"], "kind": "point_in_time", "premium_only": true},
+    "NamespaceMemoryUsage":            {"unit": "Percent", "aggregations": ["Total", "Average", "Minimum", "Maximum"], "dimensions": ["Replica"], "kind": "point_in_time", "premium_only": true},
+    "OutgoingBytes":                   {"unit": "Bytes",   "aggregations": ["Total"], "dimensions": ["EntityName"], "kind": "counter"},
+    "OutgoingMessages":                {"unit": "Count",   "aggregations": ["Total"], "dimensions": ["EntityName"], "kind": "counter"},
+    "PendingCheckpointOperationCount": {"unit": "Count",   "aggregations": ["Total"], "dimensions": [], "kind": "counter", "premium_only": true},
+    "ReplicationLagCount":             {"unit": "Count",   "aggregations": ["Maximum", "Minimum", "Average"], "dimensions": ["EntityName"], "kind": "point_in_time", "geo_replication_only": true},
+    "ReplicationLagDuration":          {"unit": "Seconds", "aggregations": ["Maximum", "Minimum", "Average"], "dimensions": ["EntityName"], "kind": "point_in_time", "geo_replication_only": true},
+    "ScheduledMessages":               {"unit": "Count",   "aggregations": ["Average", "Minimum", "Maximum"], "dimensions": ["EntityName"], "kind": "point_in_time", "entity_level": true},
+    "ServerErrors":                    {"unit": "Count",   "aggregations": ["Total"], "dimensions": ["EntityName", "OperationResult"], "kind": "counter"},
+    "ServerSendLatency":               {"unit": "MilliSeconds", "aggregations": ["Average"], "dimensions": ["EntityName"], "kind": "average_only"},
+    "Size":                            {"unit": "Bytes",   "aggregations": ["Average", "Minimum", "Maximum"], "dimensions": ["EntityName"], "kind": "point_in_time", "entity_level": true},
+    "SuccessfulRequests":              {"unit": "Count",   "aggregations": ["Total"], "dimensions": ["EntityName", "OperationResult"], "kind": "counter"},
+    "ThrottledRequests":               {"unit": "Count",   "aggregations": ["Total"], "dimensions": ["EntityName", "OperationResult", "MessagingErrorSubCode"], "kind": "counter"},
+    "UserErrors":                      {"unit": "Count",   "aggregations": ["Total"], "dimensions": ["EntityName", "OperationResult"], "kind": "counter"},
+    "WSXNS":                           {"unit": "Percent", "aggregations": ["Maximum"], "dimensions": ["Replica"], "kind": "point_in_time", "deprecated": true, "replacement": "NamespaceMemoryUsage", "premium_only": true}
+  },
+  "grafana_units_by_azure_unit": {
+    "Count": ["short", "none", "locale"],
+    "Bytes": ["bytes", "decbytes"],
+    "Percent": ["percent"],
+    "MilliSeconds": ["ms"],
+    "Seconds": ["s"]
+  }
+}
