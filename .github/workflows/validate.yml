@@ -1,0 +1,19 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+      - name: Validate dashboard
+        run: python validator/validate_dashboard.py dashboard/azure-service-bus.json
+      - name: Regression tests
+        run: python -m unittest discover -s validator -v

@@ -1,5 +1,7 @@
 # Azure Service Bus — modernized Grafana dashboard
 
+[![validate](https://github.com/lvictorerod/grafana-azure-service-bus/actions/workflows/validate.yml/badge.svg)](https://github.com/lvictorerod/grafana-azure-service-bus/actions/workflows/validate.yml)
+
 Read-only operational dashboard for one Azure Service Bus namespace, using Azure Monitor platform metrics.
 Modernized from [grafana.com dashboard 10533](https://grafana.com/grafana/dashboards/10533-azure-service-bus/) (2019).
 
@@ -81,6 +83,8 @@ of this repository. Provisioned rules are read-only in the Grafana UI.
 python3 validator/validate_dashboard.py dashboard/azure-service-bus.json      # exit 0 = no errors
 python3 -m unittest discover -s validator -v                                # regression tests
 ```
+
+Both run on every push to `main` and on pull requests (`.github/workflows/validate.yml`).
 
 The validator runs offline. It checks JSON syntax, unique panel ids/refIds, layout, deprecated/plugin panel types,
 datasource references (no hardcoded uids or name strings), declared/used variables and cascade order, hardcoded
